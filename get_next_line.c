@@ -6,7 +6,7 @@
 /*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:48 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/07 17:27:34 by thbouver         ###   ########.fr       */
+/*   Updated: 2025/10/08 17:47:11 by thbouver         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ char	*_get_line_from_cache(char **cache)
 	*cache = _new_cache;
 	return (_cache_line);
 }
-
 void	trim_and_save(char *line, char *cache)
 {
 	int	index;
@@ -65,6 +64,22 @@ void	trim_and_save(char *line, char *cache)
 	}
 }
 
+void	ft_pustr(char *str)
+{
+	while (*str)
+		write (1, str++, 1);
+}
+
+void	add_newline(char *src)
+{
+	int	index;
+
+	index = 0;
+	while (src[index])
+		index ++;
+	src[index] = '\n';
+}
+
 char	*get_next_line(int fd)
 {
 	static char	*cache;
@@ -73,11 +88,8 @@ char	*get_next_line(int fd)
 	char		*tmp;
 	int			count;
 
-	if (fd == -1)
+	if (fd < 0 || BUFFER_SIZE <= 0 || (read(fd, 0, 0) < 0))
 		return (NULL);
-	tmp = ft_calloc(1, sizeof(char));
-	if (!tmp)
-		return(NULL);
 	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!cache)
 		cache = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
@@ -85,20 +97,27 @@ char	*get_next_line(int fd)
 		return (NULL);
 	if (ft_strchr(cache, '\n'))
 	{
+		printf("ici");
 		line = _get_line_from_cache(&cache);
-		return (line);
+		add_newline(line);
 	}
 	else
 	{
+		tmp = ft_calloc(1, sizeof(char));
+		if (!tmp)
+			return(NULL);
 		count = read(fd, buffer, BUFFER_SIZE);
-		if (count == 0 && ft_strlen(cache) == 0)
+		if ((count == 0 && ft_strlen(cache) == 0))
 		{
+			free (cache);
+			free (buffer);
+			free (tmp);
 			return (NULL);
 		}
 		if (ft_strlen(cache) > 0)
 		{
-			tmp = ft_strdup(cache);	
-			ft_bzero(cache, BUFFER_SIZE + 1);
+			free (tmp);
+			tmp = _get_line_from_cache(&cache);
 		}
 		tmp = ft_realloc(tmp, buffer);
 		while (count != 0 && !ft_strchr(buffer, '\n'))
@@ -109,30 +128,40 @@ char	*get_next_line(int fd)
 		}
 		line = ft_strdup(tmp);
 		if (ft_strchr(line, '\n'))
-		{
 			trim_and_save(line, cache);
-		}
+		free (tmp);
 	}
-	free (tmp);
 	free (buffer);
-	printf ("(%s)", line);
 	return (line);
 }
 
 int	main(void)
 {
 	int fd = open("testfile.txt", O_RDONLY);
-	char *line = get_next_line(fd);
-	free (line);
+	char *line;
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		printf("%s", line);
+		free (line);
+	}
 
-	line = get_next_line(fd);
-	free (line);
+	
+	// char *line1 = get_next_line(fd);
+	// printf ("-------------\n%s", line1);
+	// free (line1);
 
-	line = get_next_line(fd);
-	free (line);
+	// char *line2 = get_next_line(fd);
+	// printf ("%s\n", line2);
+	// free (line2);
+
+	// char *line3 = get_next_line(fd);
+	// printf ("%s\n", line3);
+	// free (line3);
 
 
-	line = get_next_line(fd);
-	free (line);
+	// get_next_line(fd);
+	// get_next_line(fd);
+	// get_next_line(fd);
+
 	close (fd);
 }
