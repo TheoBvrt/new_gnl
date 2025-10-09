@@ -6,14 +6,14 @@
 /*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:40 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/09 16:22:31 by thbouver         ###   ########.fr       */
+/*   Updated: 2025/10/09 17:18:33 by thbouver         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-// # define BUFFER_SIZE 50
+// # define BUFFER_SIZE 1
 
 # include <unistd.h>
 # include <stdlib.h>

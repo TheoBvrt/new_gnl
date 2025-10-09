@@ -6,7 +6,7 @@
 /*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:48 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/09 16:27:17 by thbouver         ###   ########.fr       */
+/*   Updated: 2025/10/09 17:18:44 by thbouver         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,14 @@ char	*ft_exit(char **cache, char *buffer, int free_cache, char *return_ptr)
 int	ft_init(char **buffer, char **cache, char **line, int fd)
 {
 	if (fd < 0 || BUFFER_SIZE <= 0 || (read(fd, 0, 0) < 0))
+	{
+		if (cache)
+		{
+			free (*cache);
+			*cache = NULL;
+		}
 		return (0);
+	}
 	*buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!*cache)
 		*cache = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
@@ -109,3 +116,4 @@ char	*get_next_line(int fd)
 	trim_and_save(line, cache);
 	return (ft_exit(&cache, buffer, 0, line));
 }
+
