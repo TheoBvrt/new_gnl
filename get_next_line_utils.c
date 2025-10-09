@@ -6,7 +6,7 @@
 /*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:51 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/08 14:33:34 by thbouver         ###   ########.fr       */
+/*   Updated: 2025/10/09 13:44:12 by thbouver         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,18 @@ char	*ft_realloc(char *dest, char *src)
 
 	index = 0;
 	ptr_index = 0;
-	new = ft_calloc(ft_strlen(dest) + ft_strlen(src) + 1, sizeof(char));
+	if (dest)
+		new = ft_calloc(ft_strlen(dest) + ft_strlen(src) + 1, sizeof(char));
+	else
+		new = ft_calloc(ft_strlen(src) + 1, sizeof(char));
 	if (!new)
 		return (NULL);
-	while (dest[index])
-		new[ptr_index ++] = dest[index ++];
-	index = 0;
+	if (dest)
+	{
+		while (dest[index])
+			new[ptr_index ++] = dest[index ++];
+		index = 0;
+	}
 	while (src[index])
 		new[ptr_index ++] = src[index ++];
 	free (dest);
