@@ -6,7 +6,7 @@
 /*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:48 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/09 13:45:09 by thbouver         ###   ########.fr       */
+/*   Updated: 2025/10/09 13:59:22 by thbouver         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,29 +25,6 @@ int	ft_strchr(char *str, char c)
 	}
 	return (0);
 }
-
-// char	*_get_line_from_cache(char **cache)
-// {
-// 	char	*_cache_line;
-// 	char	*_new_cache;
-// 	int		cache_index;
-// 	int		index;
-	
-// 	cache_index = 0;
-// 	index = 0;
-// 	_new_cache = ft_calloc(ft_strlen(*cache) + 1, sizeof(char));
-// 	_cache_line = ft_calloc(ft_strlen(*cache) + 1, sizeof(char));
-// 	while ((*cache)[index] && (*cache)[index] != '\n')
-// 		_cache_line[cache_index ++] = (*cache)[index ++];
-// 	if ((*cache)[index] == '\n')
-// 		_cache_line[cache_index] = (*cache)[index ++];
-// 	cache_index = 0;
-// 	while ((*cache)[index])
-// 		_new_cache[cache_index ++] = (*cache)[index ++];
-// 	free (*cache);
-// 	*cache = _new_cache;
-// 	return (_cache_line);
-// }
 
 void	_get_line_from_cache(char **cache, char **dest)
 {
@@ -79,6 +56,8 @@ void	trim_and_save(char *line, char *cache)
 
 	index = 0;
 	index_cache = 0;
+	if (!ft_strchr(line, '\n'))
+		return ;
 	while (line[index] != '\n')
 			index ++;
 		index ++;
@@ -102,7 +81,6 @@ char	*get_next_line(int fd)
 	static char	*cache;
 	char		*buffer;
 	char		*line;
-	char		*tmp;
 	int			count;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || (read(fd, 0, 0) < 0))
@@ -113,36 +91,23 @@ char	*get_next_line(int fd)
 	if (!buffer || !cache)
 		return (NULL);
 	if (ft_strchr(cache, '\n'))
-	{
-		// line = _get_line_from_cache(&cache);
 		_get_line_from_cache(&cache, &line);
-	}
 	else
 	{
-		// tmp = ft_calloc(1, sizeof(char));
-		// if (!tmp)
-		// 	return(NULL);
-		tmp = NULL;
+		line = NULL;
 		count = read(fd, buffer, BUFFER_SIZE);
 		if ((count == 0 && ft_strlen(cache) == 0))
 			return (ft_exit(&cache, buffer));
 		if (ft_strlen(cache) > 0)
-		{
-			//free (tmp);
-			//tmp = _get_line_from_cache(&cache);
-					_get_line_from_cache(&cache, &tmp);
-		}
-		tmp = ft_realloc(tmp, buffer);
+			_get_line_from_cache(&cache, &line);
+		line = ft_realloc(line, buffer);
 		while (count != 0 && !ft_strchr(buffer, '\n'))
 		{
 			ft_bzero(buffer, BUFFER_SIZE + 1);
 			count = read(fd, buffer, BUFFER_SIZE);
-			tmp = ft_realloc(tmp, buffer);
+			line = ft_realloc(line, buffer);
 		}
-		line = ft_strdup(tmp);
-		if (ft_strchr(line, '\n'))
-			trim_and_save(line, cache);
-		free (tmp);
+		trim_and_save(line, cache);
 	}
 	free (buffer);
 	return (line);
