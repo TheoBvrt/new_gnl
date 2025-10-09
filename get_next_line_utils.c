@@ -6,11 +6,25 @@
 /*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:51 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/09 13:44:12 by thbouver         ###   ########.fr       */
+/*   Updated: 2025/10/09 15:11:07 by thbouver         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+int	ft_strchr(char *str, char c)
+{
+	int	index;
+
+	index = 0;
+	while (str[index])
+	{
+		if (str[index] == c)
+			return (1);
+		index ++;
+	}
+	return (0);
+}
 
 int	ft_strlen(const char *str)
 {
@@ -39,23 +53,6 @@ void	*ft_calloc(size_t count, size_t size)
 	if (!ptr)
 		return (NULL);
 	ft_bzero(ptr, count * size);
-	return (ptr);
-}
-
-char	*ft_strdup(const char *source)
-{
-	int		index;
-	char	*ptr;
-
-	index = 0;
-	ptr = ft_calloc(ft_strlen(source) + 1, sizeof(char));
-	if (!ptr)
-		return (NULL);
-	while (source[index])
-	{
-		ptr[index] = source[index];
-		index ++;
-	}
 	return (ptr);
 }
 

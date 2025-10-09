@@ -6,47 +6,33 @@
 /*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:48 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/09 13:59:22 by thbouver         ###   ########.fr       */
+/*   Updated: 2025/10/09 15:11:32 by thbouver         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	ft_strchr(char *str, char c)
+void	get_line_from_cache(char **cache, char **dest)
 {
-	int	index;
-
-	index = 0;
-	while (str[index])
-	{
-		if (str[index] == c)
-			return (1);
-		index ++;
-	}
-	return (0);
-}
-
-void	_get_line_from_cache(char **cache, char **dest)
-{
-	char	*_cache_line;
-	char	*_new_cache;
+	char	*cache_line;
+	char	*new_cache;
 	int		cache_index;
 	int		index;
-	
+
 	cache_index = 0;
 	index = 0;
-	_new_cache = ft_calloc(ft_strlen(*cache) + 1, sizeof(char));
-	_cache_line = ft_calloc(ft_strlen(*cache) + 1, sizeof(char));
+	new_cache = ft_calloc(ft_strlen(*cache) + 1, sizeof(char));
+	cache_line = ft_calloc(ft_strlen(*cache) + 1, sizeof(char));
 	while ((*cache)[index] && (*cache)[index] != '\n')
-		_cache_line[cache_index ++] = (*cache)[index ++];
+		cache_line[cache_index ++] = (*cache)[index ++];
 	if ((*cache)[index] == '\n')
-		_cache_line[cache_index] = (*cache)[index ++];
+		cache_line[cache_index] = (*cache)[index ++];
 	cache_index = 0;
 	while ((*cache)[index])
-		_new_cache[cache_index ++] = (*cache)[index ++];
+		new_cache[cache_index ++] = (*cache)[index ++];
 	free (*cache);
-	*cache = _new_cache;
-	*dest = _cache_line;
+	*cache = new_cache;
+	*dest = cache_line;
 }
 
 void	trim_and_save(char *line, char *cache)
@@ -59,8 +45,8 @@ void	trim_and_save(char *line, char *cache)
 	if (!ft_strchr(line, '\n'))
 		return ;
 	while (line[index] != '\n')
-			index ++;
 		index ++;
+	index ++;
 	while (line[index])
 	{
 		cache[index_cache ++] = line[index];
@@ -68,12 +54,28 @@ void	trim_and_save(char *line, char *cache)
 	}
 }
 
-char	*ft_exit(char **cache, char *buffer)
+char	*ft_exit(char **cache, char *buffer, int free_cache, char *return_ptr)
 {
-	free (*cache);
-	*cache = NULL;
+	if (free_cache)
+	{
+		free (*cache);
+		*cache = NULL;
+	}
 	free (buffer);
-	return (NULL);
+	return (return_ptr);
+}
+
+int	ft_init(char **buffer, char **cache, char **line, int fd)
+{
+	if (fd < 0 || BUFFER_SIZE <= 0 || (read(fd, 0, 0) < 0))
+		return (0);
+	*buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	if (!*cache)
+		*cache = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	if (!*buffer || !*cache)
+		return (0);
+	*line = NULL;
+	return (1);
 }
 
 char	*get_next_line(int fd)
@@ -83,23 +85,17 @@ char	*get_next_line(int fd)
 	char		*line;
 	int			count;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || (read(fd, 0, 0) < 0))
-		return (NULL);
-	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	if (!cache)
-		cache = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	if (!buffer || !cache)
+	if (!ft_init(&buffer, &cache, &line, fd))
 		return (NULL);
 	if (ft_strchr(cache, '\n'))
-		_get_line_from_cache(&cache, &line);
+		get_line_from_cache(&cache, &line);
 	else
 	{
-		line = NULL;
 		count = read(fd, buffer, BUFFER_SIZE);
 		if ((count == 0 && ft_strlen(cache) == 0))
-			return (ft_exit(&cache, buffer));
+			return (ft_exit(&cache, buffer, 1, NULL));
 		if (ft_strlen(cache) > 0)
-			_get_line_from_cache(&cache, &line);
+			get_line_from_cache(&cache, &line);
 		line = ft_realloc(line, buffer);
 		while (count != 0 && !ft_strchr(buffer, '\n'))
 		{
@@ -109,38 +105,5 @@ char	*get_next_line(int fd)
 		}
 		trim_and_save(line, cache);
 	}
-	free (buffer);
-	return (line);
+	return (ft_exit(&cache, buffer, 0, line));
 }
-
-// int	main(void)
-// {
-// 	int fd = open("testfile.txt", O_RDONLY);
-// 	// char *line = get_next_line(fd);
-// 	char *line;
-// 	while ((line = get_next_line(fd)) != NULL)
-// 	{
-// 		printf("%s", line);
-// 		free (line);
-// 	}
-
-	
-// 	// char *line1 = get_next_line(fd);
-// 	// printf ("-------------\n%s", line1);
-// 	// free (line1);
-
-// 	// char *line2 = get_next_line(fd);
-// 	// printf ("%s\n", line2);
-// 	// free (line2);
-
-// 	// char *line3 = get_next_line(fd);
-// 	// printf ("%s\n", line3);
-// 	// free (line3);
-
-
-// 	// get_next_line(fd);
-// 	// get_next_line(fd);
-// 	// get_next_line(fd);
-
-// 	close (fd);
-// }
