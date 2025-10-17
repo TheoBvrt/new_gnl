@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theo <theo@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:40 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/17 01:08:59 by theo             ###   ########.fr       */
+/*   Updated: 2025/10/17 11:58:24 by thbouver         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,16 +101,8 @@ char	*ft_strjoin(char const *s1, char const *s2)
 char	*ft_realloc(char *dest, char *src)
 {
 	char	*tmp;
-	if (!src && !dest)
-		return (NULL);
-	if (!src)
-		return (dest);
-	if (!dest)
-		return (ft_strdup(src));
 
 	tmp = ft_strdup(dest);
-	if (!tmp)
-		return (NULL);
 	free (dest);
 	dest = ft_strjoin(tmp, src);
 	free (tmp);
