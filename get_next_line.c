@@ -6,17 +6,16 @@
 /*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:40 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/17 16:26:22 by thbouver         ###   ########.fr       */
+/*   Updated: 2025/10/17 16:54:56 by thbouver         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*free_exit(char **ptr1, char *return_ptr)
+char	*free_exit(char **ptr, char *return_ptr)
 {
-	free (*ptr1);
-	*ptr1 = NULL;
-
+	free (*ptr);
+	*ptr = NULL;
 	return (return_ptr);
 }
 
@@ -75,29 +74,26 @@ char	*_read_file(char *buffer, int fd, char *stash)
 {
 	char	*cache;
 	int		state;
+	int		index;
 
 	state = 1;
 	cache = ft_calloc(1, sizeof(char));
 	if (!cache)
 		return (NULL);
 	if (stash)
-	{
 		cache = ft_realloc(cache, stash);
-		if (!cache)
-			return (NULL);
-		free (stash);
-	}
+	free (stash);
 	while (state > 0 && !ft_strchr(buffer, '\n'))
 	{
-		ft_bzero(buffer, BUFFER_SIZE + 1);
+		index = 0;
+		while (index < BUFFER_SIZE + 1)
+			buffer[index ++] = '\0';
 		state = read(fd, buffer, BUFFER_SIZE);
 		if (state == -1)
 			return (free_exit(&cache, NULL));
 		cache = ft_realloc(cache, buffer);
-		if (!cache)
-			return (NULL);
 	}
-	return (cache);	
+	return (cache);
 }
 
 char	*get_next_line(int fd)
@@ -105,12 +101,12 @@ char	*get_next_line(int fd)
 	static char	*cache = NULL;
 	char		*buffer;
 	char		*line;
-	
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
 	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buffer)
 		return (NULL);
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (free_exit(&buffer, NULL));
 	if (!ft_strchr(cache, '\n'))
 	{
 		cache = _read_file(buffer, fd, cache);
