@@ -6,7 +6,7 @@
 /*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:40 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/17 11:58:24 by thbouver         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:50:46 by thbouver         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,32 +79,43 @@ char	*ft_strdup(const char *source)
 	return (ptr);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	int		index;
-	int		index_2;
-	char	*ptr;
+// char	*ft_strjoin(char const *s1, char const *s2)
+// {
+// 	int		index;
+// 	int		index_2;
+// 	char	*ptr;
 
-	index = 0;
-	index_2 = 0;
-	ptr = ft_calloc(ft_strlen(s1) + ft_strlen(s2) + 1, sizeof(char));
-	if (!ptr)
-		return (NULL);
-	while (s1[index_2])
-		ptr[index ++] = s1[index_2 ++];
-	index_2 = 0;
-	while (s2[index_2])
-		ptr[index ++] = s2[index_2 ++];
-	return (ptr);
-}
+// 	index = 0;
+// 	index_2 = 0;
+// 	ptr = ft_calloc(ft_strlen(s1) + ft_strlen(s2) + 1, sizeof(char));
+// 	if (!ptr)
+// 		return (NULL);
+// 	while (s1[index_2])
+// 		ptr[index ++] = s1[index_2 ++];
+// 	index_2 = 0;
+// 	while (s2[index_2])
+// 		ptr[index ++] = s2[index_2 ++];
+// 	return (ptr);
+// }
 
 char	*ft_realloc(char *dest, char *src)
 {
 	char	*tmp;
+	int		index;
+	int		index_2;
 
+	index = 0;
+	index_2 = 0;
 	tmp = ft_strdup(dest);
 	free (dest);
-	dest = ft_strjoin(tmp, src);
+	dest = ft_calloc(ft_strlen(tmp) + ft_strlen(src) + 1, sizeof(char));
+	if (!dest)
+		return (NULL);
+	while (tmp[index_2])
+		dest[index ++] = tmp[index_2 ++];
+	index_2 = 0;
+	while (src[index_2])
+		dest[index ++] = src[index_2 ++];
 	free (tmp);
 	return (dest);
 }

@@ -6,11 +6,19 @@
 /*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:40 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/17 12:01:57 by thbouver         ###   ########.fr       */
+/*   Updated: 2025/10/17 16:26:22 by thbouver         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+char	*free_exit(char **ptr1, char *return_ptr)
+{
+	free (*ptr1);
+	*ptr1 = NULL;
+
+	return (return_ptr);
+}
 
 char	*_get_line(char *cache)
 {
@@ -84,10 +92,7 @@ char	*_read_file(char *buffer, int fd, char *stash)
 		ft_bzero(buffer, BUFFER_SIZE + 1);
 		state = read(fd, buffer, BUFFER_SIZE);
 		if (state == -1)
-		{
-			free (cache);
-			return (NULL);
-		}
+			return (free_exit(&cache, NULL));
 		cache = ft_realloc(cache, buffer);
 		if (!cache)
 			return (NULL);
@@ -96,38 +101,21 @@ char	*_read_file(char *buffer, int fd, char *stash)
 }
 
 char	*get_next_line(int fd)
-{ 
+{
 	static char	*cache = NULL;
 	char		*buffer;
 	char		*line;
 	
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
 	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buffer)
-	{
-		free (cache);
 		return (NULL);
-	}
-	if (cache == NULL)
-	{
-		cache = ft_calloc(1, sizeof(char));
-		if (!cache)
-		{
-			free (buffer);
-			return (NULL);
-		}
-	}
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (free_exit(&buffer, NULL));
 	if (!ft_strchr(cache, '\n'))
 	{
-		char *tmp = _read_file(buffer, fd, cache);
-		if (!tmp)
-		{
-			cache = NULL;
-			free(buffer);
-			return (NULL);
-		}
-		cache = tmp;
+		cache = _read_file(buffer, fd, cache);
+		if (!cache)
+			return (free_exit(&buffer, NULL));
 	}
 	if (ft_strlen(cache) == 0)
 	{
@@ -138,6 +126,5 @@ char	*get_next_line(int fd)
 	}
 	line = _get_line(cache);
 	cache = _update_cache(cache);
-	free (buffer);
-	return (line);
+	return (free_exit(&buffer, line));
 }
