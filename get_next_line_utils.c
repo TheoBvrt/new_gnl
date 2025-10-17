@@ -6,7 +6,7 @@
 /*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:40 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/17 14:53:29 by thbouver         ###   ########.fr       */
+/*   Updated: 2025/10/17 11:58:24 by thbouver         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ char	*ft_strdup(const char *source)
 	index = 0;
 	if (!source)
 		return (NULL);
-	return (NULL);
 	ptr = ft_calloc(ft_strlen(source) + 1, sizeof(char));
 	if (!ptr)
 		return (NULL);
@@ -104,12 +103,6 @@ char	*ft_realloc(char *dest, char *src)
 	char	*tmp;
 
 	tmp = ft_strdup(dest);
-	if (!tmp)
-	{
-		free (src);
-		free (dest);
-		return (NULL);
-	}
 	free (dest);
 	dest = ft_strjoin(tmp, src);
 	free (tmp);

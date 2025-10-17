@@ -6,7 +6,7 @@
 /*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:40 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/17 14:54:28 by thbouver         ###   ########.fr       */
+/*   Updated: 2025/10/17 12:01:57 by thbouver         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,23 +105,29 @@ char	*get_next_line(int fd)
 		return (NULL);
 	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buffer)
+	{
+		free (cache);
 		return (NULL);
+	}
 	if (cache == NULL)
 	{
 		cache = ft_calloc(1, sizeof(char));
 		if (!cache)
+		{
+			free (buffer);
 			return (NULL);
+		}
 	}
 	if (!ft_strchr(cache, '\n'))
 	{
-		cache = _read_file(buffer, fd, cache);
-		if (!cache)
+		char *tmp = _read_file(buffer, fd, cache);
+		if (!tmp)
 		{
-			free (buffer);
-			free (cache);
 			cache = NULL;
+			free(buffer);
 			return (NULL);
 		}
+		cache = tmp;
 	}
 	if (ft_strlen(cache) == 0)
 	{
@@ -135,14 +141,3 @@ char	*get_next_line(int fd)
 	free (buffer);
 	return (line);
 }
-
-// int	main(void)
-// {
-// 	int fd = open("file.txt", O_RDONLY);
-
-// 	char *line;
-// 	line = get_next_line(fd);
-// 	printf ("%s", line);
-// 	free (line);
-// 	return (1);
-// }
