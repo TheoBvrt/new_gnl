@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: theo <theo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:40 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/16 16:50:02 by thbouver         ###   ########.fr       */
+/*   Updated: 2025/10/17 01:11:08 by theo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,8 @@ char	*_read_file(char *buffer, int fd, char *stash)
 			return (NULL);
 		}
 		cache = ft_realloc(cache, buffer);
+		if (!cache)
+			return (NULL);
 	}
 	return (cache);	
 }
@@ -99,11 +101,34 @@ char	*get_next_line(int fd)
 	char		*buffer;
 	char		*line;
 	
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
 	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buffer)
+	{
+		free (cache);
 		return (NULL);
+	}
+	if (cache == NULL)
+	{
+		cache = ft_calloc(1, sizeof(char));
+		if (!cache)
+		{
+			free (buffer);
+			return (NULL);
+		}
+	}
 	if (!ft_strchr(cache, '\n'))
-		cache = _read_file(buffer, fd, cache); 	
+	{
+		char *tmp = _read_file(buffer, fd, cache);
+		if (!tmp)
+		{
+			cache = NULL;
+			free(buffer);
+			return (NULL);
+		}
+		cache = tmp;
+	}
 	if (ft_strlen(cache) == 0)
 	{
 		free (cache);
@@ -112,11 +137,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	}
 	line = _get_line(cache);
-	if (!line)
-		return (NULL);
 	cache = _update_cache(cache);
-	if (!cache)
-		return (NULL);
 	free (buffer);
 	return (line);
 }

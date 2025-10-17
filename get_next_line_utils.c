@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: thbouver <thbouver@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: theo <theo@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 11:24:40 by thbouver          #+#    #+#             */
-/*   Updated: 2025/10/16 16:36:43 by thbouver         ###   ########.fr       */
+/*   Updated: 2025/10/17 01:08:59 by theo             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ char	*ft_strdup(const char *source)
 	char	*ptr;
 
 	index = 0;
+	if (!source)
+		return (NULL);
 	ptr = ft_calloc(ft_strlen(source) + 1, sizeof(char));
 	if (!ptr)
 		return (NULL);
@@ -85,8 +87,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 	index = 0;
 	index_2 = 0;
-	if (!s1 || !s2)
-		return (NULL);
 	ptr = ft_calloc(ft_strlen(s1) + ft_strlen(s2) + 1, sizeof(char));
 	if (!ptr)
 		return (NULL);
@@ -100,20 +100,19 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 char	*ft_realloc(char *dest, char *src)
 {
-	char	*new;
-	int		index;
-	int		ptr_index;
-
-	index = 0;
-	ptr_index = 0;
-	new = ft_calloc(ft_strlen(dest) + ft_strlen(src) + 1, sizeof(char));
-	if (!new)
+	char	*tmp;
+	if (!src && !dest)
 		return (NULL);
-	while (dest[index])
-		new[ptr_index ++] = dest[index ++];
-	index = 0;
-	while (src[index])
-		new[ptr_index ++] = src[index ++];
+	if (!src)
+		return (dest);
+	if (!dest)
+		return (ft_strdup(src));
+
+	tmp = ft_strdup(dest);
+	if (!tmp)
+		return (NULL);
 	free (dest);
-	return (new);
+	dest = ft_strjoin(tmp, src);
+	free (tmp);
+	return (dest);
 }
